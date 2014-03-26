@@ -78,6 +78,7 @@ getFluxGraph <- function(m, m.f=NULL) {
     m.sol <- optimizeProb(m, algorithm="mtf")
     m.f <- getFluxDist(m.sol)    
   }
+  names(m.f) <- m@react_id
   
   getTables <- function(rxn, met) {
     rxn.id <- m@react_id[rxn]
@@ -119,7 +120,12 @@ getFluxGraph <- function(m, m.f=NULL) {
   node.table <- unique(rbindlist(lapply(tables, "[[", "node.table")))
   edge.table <- unique(rbindlist(lapply(tables, "[[", "edge.table")))
   
-  GAM:::graph.from.tables(
+  res <- GAM:::graph.from.tables(
     node.table=as.data.frame(node.table),
     edge.table=as.data.frame(edge.table))
+  
+  attr(res, "model") <- m
+  attr(res, "fluxDist") <- m.f
+  
+  res 
 }
