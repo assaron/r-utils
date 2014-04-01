@@ -129,3 +129,11 @@ getFluxGraph <- function(m, m.f=NULL) {
   
   res 
 }
+
+changeObjFuncRel <- function(model, reacts) {
+  reacts.max <- sapply(reacts, function(react) {
+      optimizeProb(changeObjFunc(model, react))@lp_obj
+    })
+  
+  changeObjFunc(model, reacts, 1 / reacts.max)
+}
