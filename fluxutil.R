@@ -9,13 +9,13 @@ allOneReactionDeletions <- function(model, reaction.to.compare) {
   model.sol <- optimizeProb(model)
   r.t.c.pos <- checkReactId(model, reaction.to.compare)@react_pos
   opt.flux <- model.sol@fluxdist@fluxes[r.t.c.pos]
-  if (opt.flux < 1e-10) {
+  if (min(opt.flux) < 1e-10) {
     stop(paste0("Optimal flux via ", reaction.to.compare, " is zero"))
   }
-  sapply(m1@react_id, USE.NAMES=T, function(r.id) {    
+  sapply(model@react_id, USE.NAMES=T, function(r.id) {    
     model.sd.sol <- oneReactionDeletion(model, r.id)    
     res <- model.sd.sol@fluxdist@fluxes[r.t.c.pos] / opt.flux
-    if (res < 0.9) {
+    if (max(res) < 0.9) {
       message(paste0(r.id, ": ", res))  
     }
     res  
