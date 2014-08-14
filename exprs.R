@@ -20,3 +20,55 @@ makeExpressionSetFromFile <- function(
     eSet
 }
 
+exprsFromSpotfire <- function(met.data.file, ion.suffix) {
+    met.data <- read.csv(file=met.data.file, head=FALSE, sep="\t", stringsAsFactors=F, colClasses="character")
+    met.data <- unname(t(as.matrix(met.data)))
+    n <- nrow(met.data)
+    m <- ncol(met.data)
+    ns <- which(met.data[, 1] != "")[1]
+    ms <- which(met.data[1, ] != "")[1]
+    met.data[(ns+1):n, ms] <- paste0(met.data[(ns+1):n, ms], ion.suffix)
+    met.exprs <- met.data[(ns+1):n, (ms+1):m]
+    
+    ion.meta <- as.data.frame(met.data[(ns+1):n, 1:(ms-1)], stringsAsFactors=F)
+    colnames(ion.meta) <- met.data[ns, 1:(ms-1)]
+    rownames(ion.meta) <- met.data[(ns+1):n, ms]
+    ion.meta$mz <- as.numeric(ion.meta$mz)
+    ion.meta$lowSignal <- as.logical(ion.meta$lowSignal)
+    
+    sample.meta <- as.data.frame(t(met.data[1:ns, (ms+1):m]), stringsAsFactors=F)
+    colnames(sample.meta) <- met.data[1:ns, ms]
+    rownames(sample.meta) <- paste0(sample.meta$platerow, sample.meta$platecolumn)
+    
+    class(met.exprs) <- "numeric"
+    met.exprs <- data.frame(met.exprs)
+    colnames(met.exprs) <- rownames(sample.meta)
+    rownames(met.exprs) <- rownames(ion.meta)
+    
+    ion2mets <- ion.meta$assignedMetabolite
+    names(ion2mets) <- rownames(ion.meta)
+    ion2mets <- ion2mets[ion2mets != "---"]
+    
+    ion2mets.list <- lapply(names(ion2mets), function(ion) {
+        mets.string <- ion2mets[ion]
+        met.strings <- unlist(strsplit(mets.string, " /// ", fixed=T), use.names=F)
+        res <- data.frame(do.call(rbind, strsplit(met.strings, " // ", fixed=T)), stringsAsFactors=F)
+        colnames(res) <- c("Name", "hmdbAndAdduct", "Mass", "Score")
+        res$Mass <- as.numeric(res$Mass)
+        res$Score <- as.numeric(res$Score)
+        hmdb.and.adduct <- do.call(rbind, strsplit(res$hmdbAndAdduct, ":", fixed=T))
+        res$HMDB <- hmdb.and.adduct[,1]
+        res$Adduct <- hmdb.and.adduct[,2]
+        res$Ion <- ion
+        res$hmdbAndAdduct <- NULL
+        res
+    })
+    
+    ion2mets.table <- do.call(rbind, ion2mets.list)
+    
+    #met.exprs <- merge(ion2mets.table, met.exprs)
+    attr(met.exprs, "ion.meta") <- ion.meta
+    attr(met.exprs, "sample.meta") <- sample.meta
+    attr(met.exprs, "ion2mets") <- ion2mets.table
+    met.exprs
+}
