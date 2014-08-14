@@ -4,9 +4,13 @@ read.tsv <- function(file, header=T, sep="\t", quote="", ...) {
     read.table(file, header=header, sep=sep, quote=quote, ...)     
 }
 
-write.tsv <- function(table, dir, row.names=NA, col.names=NA, ...) {
+write.tsv <- function(table, dir, file=NULL, row.names=NA, col.names=NA, ...) {
     name <- deparse(substitute(table))
     table <- as.data.frame(table) 
+    
+    if (is.null(file)) {
+        file <- file.path(dir, paste0(name, ".tsv"))
+    }
 
     if (is.na(row.names)) {
         row.names <- is.character(attr(table, "row.names"))
@@ -15,6 +19,6 @@ write.tsv <- function(table, dir, row.names=NA, col.names=NA, ...) {
     if (!row.names && is.na(col.names)) {
         col.names=T
     }
-    write.table(table, file.path(dir, paste0(name, ".tsv")), quote=F,
+    write.table(table, file, quote=F,
                 row.names=row.names, col.names=col.names, sep="\t")
 }
