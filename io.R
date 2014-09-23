@@ -1,7 +1,7 @@
 options(stringsAsFactors=F)
 
-read.tsv <- function(file, header=T, sep="\t", quote="", ...) {
-    read.table(file, header=header, sep=sep, quote=quote, ...)     
+read.tsv <- function(file, header=T, sep="\t", quote="", comment.char="", ...) {
+    read.table(file, header=header, sep=sep, quote=quote, comment.char=comment.char, ...)     
 }
 
 write.tsv <- function(table, dir, file=NULL, row.names=NA, col.names=NA, ...) {
