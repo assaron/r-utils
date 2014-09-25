@@ -20,6 +20,35 @@ makeExpressionSetFromFile <- function(
     eSet
 }
 
+exprsFromSpotfireDir <- function(met.data.dir) {
+    files <- list.files(met.data.dir, pattern="forSpotfire.txt", full.names=T, recursive=T)
+    suffixes <- sapply(files, function(f) basename(dirname(f)))
+    
+    stopifnot(all(!duplicated(suffixes)))
+    
+    raw.list <- list()
+    
+    for (f in files) {
+        suffix <- suffixes[[f]]
+        raw.list[[suffix]] <- exprsFromSpotfire(met.data.file=f, ion.suffix=suffix)    
+    }
+    
+    ion.exprs <- do.call(rbind.fill, raw.list)
+    rownames(ion.exprs) <- unlist(lapply(raw.list, rownames))
+    
+    sample.metas <- lapply(raw.list, function(x) attr(x, "sample.meta"))
+    
+    #     cleangroupname <- sample.metas[[1]]$cleangroupname
+    #     names(cleangroupname) <- rownames(sample.metas[[1]])
+    #     sapply(sample.metas, function(m) all(m$cleangroupname == cleangroupname))
+    
+    
+    attr(ion.exprs, "ion.meta") <- do.call(rbind, unname(lapply(raw.list, function(x) attr(x, "ion.meta"))))
+    attr(ion.exprs, "ion2mets") <- do.call(rbind, unname(lapply(raw.list, function(x) attr(x, "ion2mets"))))
+    
+    ion.exprs    
+}
+
 exprsFromSpotfire <- function(met.data.file, ion.suffix) {
     met.data <- read.csv(file=met.data.file, head=FALSE, sep="\t", stringsAsFactors=F, colClasses="character")
     met.data <- unname(t(as.matrix(met.data)))
