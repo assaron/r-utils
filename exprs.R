@@ -29,6 +29,7 @@ exprsFromSpotfireDir <- function(met.data.dir) {
     raw.list <- list()
     
     for (f in files) {
+        message(sprintf("Processing file %s", f))
         suffix <- suffixes[[f]]
         raw.list[[suffix]] <- exprsFromSpotfire(met.data.file=f, ion.suffix=suffix)    
     }
