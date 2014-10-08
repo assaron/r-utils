@@ -19,6 +19,13 @@ write.tsv <- function(table, dir, file=NULL, row.names=NA, col.names=NA, ...) {
     if (!row.names && is.na(col.names)) {
         col.names=T
     }
+    
+    for (c in colnames(table)) {
+        if (is.character(table[[c]])) {
+            table[[c]] <- sub("#", "", table[[c]])            
+        }
+    }
+    
     write.table(table, file, quote=F,
                 row.names=row.names, col.names=col.names, sep="\t")
 }
