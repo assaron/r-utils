@@ -1,5 +1,47 @@
 options(stringsAsFactors=F)
 
+read.table.smart <- function(path, ...) {
+    fields <- list(...)    
+    conn <- file(path)
+    header <- readLines(conn, n=1)
+    close(conn)
+    
+    sep <- "\t"
+    for (s in c("\t", " ", ",")) {
+        if (grepl(s, header)) {
+            sep <- s
+            break
+        } 
+    }
+    
+    res <- as.data.table(read.table(path, sep=sep, header=T, stringsAsFactors=F))
+    
+    oldnames <- character(0)
+    newnames <- character(0)
+    
+    for (field in names(fields)) {        
+        if (field %in% colnames(res)) {
+            next
+        }
+        
+        z <- na.omit(
+            match(
+                tolower(c(field, fields[[field]])),
+                tolower(colnames(res))))
+        if (length(z) == 0) {
+            next
+        }
+        
+        oldnames <- c(oldnames, colnames(res)[z])
+        newnames <- c(newnames, field)
+    }
+        
+    setnames(res, oldnames, newnames)
+    res
+}
+
+
+
 read.tsv <- function(file, header=T, sep="\t", quote="", comment.char="", check.names=FALSE, ...) {
     read.table(file, header=header, sep=sep, quote=quote, 
                comment.char=comment.char, check.names=check.names,
