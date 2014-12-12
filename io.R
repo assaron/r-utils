@@ -6,12 +6,12 @@ read.tsv <- function(file, header=T, sep="\t", quote="", comment.char="", check.
                ...)     
 }
 
-write.tsv <- function(table, dir, file=NULL, row.names=NA, col.names=NA, ...) {
+write.tsv <- function(table, dir, file=NULL, gzip=FALSE, row.names=NA, col.names=NA, ...) {
     name <- deparse(substitute(table))
     table <- as.data.frame(table) 
     
     if (is.null(file)) {
-        file <- file.path(dir, paste0(name, ".tsv"))
+        file <- file.path(dir, paste0(name, ".tsv", if (gzip) ".gz"))        
     }
 
     if (is.na(row.names)) {
@@ -28,6 +28,12 @@ write.tsv <- function(table, dir, file=NULL, row.names=NA, col.names=NA, ...) {
         }
     }
     
+    if (gzip) {
+        file <- gzfile(file, "w")
+    }
     write.table(table, file, quote=F,
                 row.names=row.names, col.names=col.names, sep="\t")
+    if (gzip) {
+        close(file)
+    }
 }
