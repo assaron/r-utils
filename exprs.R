@@ -20,6 +20,10 @@ makeExpressionSetFromFile <- function(
     eSet
 }
 
+DESeqDataSetFromExpressionSet <- function(eSet, design) {
+    DESeqDataSetFromMatrix(exprs(eSet), pData(eSet), design)
+}
+
 exprsFromSpotfireDir <- function(met.data.dir) {
     files <- list.files(met.data.dir, pattern="forSpotfire.txt", full.names=T, recursive=T)
     suffixes <- sapply(files, function(f) basename(dirname(f)))
