@@ -3,12 +3,13 @@
 
 makeExpressionSetFromFile <- function(
     exprs.file, 
-    pdata.file
+    pdata.file,
+    ignore.pattern = "^__"
     ) {
     
     require(Biobase)
     exprs <- read.table(exprs.file)
-    exprs <- as.matrix(exprs)
+    exprs <- as.matrix(exprs[grep(ignore.pattern, rownames(exprs), invert=TRUE), ])        
     pdata <- read.table(pdata.file, header=T, row.names=1)
     pdata <- pdata[colnames(exprs), , drop=F]
     meta <- data.frame(labelDescription = colnames(pdata))
