@@ -107,3 +107,47 @@ exprsFromSpotfire <- function(met.data.file, ion.suffix) {
     attr(met.exprs, "ion2mets") <- ion2mets.table
     met.exprs
 }
+
+rename.smart <- function(de, ...) {    
+    fields <- list(...) 
+    oldnames <- character(0)
+    newnames <- character(0)
+    
+    for (field in names(fields)) {        
+        if (field %in% colnames(de)) {
+            next
+        }
+        
+        z <- na.omit(
+            match(
+                tolower(c(field, fields[[field]])),
+                tolower(colnames(de))))
+        if (length(z) == 0) {
+            next
+        }
+        
+        oldnames <- c(oldnames, colnames(de)[z])
+        newnames <- c(newnames, field)
+    }
+    
+    setnames(de, oldnames, newnames)    
+}
+
+
+
+normalizeGeneDE <- function(de, org) {
+    de <- as.data.table(as.data.frame(de), keep.rownames=TRUE)
+    rename.smart(de, 
+                 ID=c("gene", "entrez", "symbol", "rn"),
+                 pval=c("p.value", "pvalue"),
+                 log2FC=c("log2foldchange", "logfc")
+    )    
+    # :ToDo: it's a hack
+    
+    de <- merge(as.data.frame(de), unique(reflink[, list(Entrez, symbol, product)]), by.x="ID", by.y="Entrez", all.x=T)
+    de <- de[!duplicated(de$ID), ]
+    de <- de[!is.na(de$pval), ]
+    de <- as.data.table(de[order(de$pval), ])
+    de
+}
+
