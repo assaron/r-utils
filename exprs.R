@@ -135,7 +135,7 @@ rename.smart <- function(de, ...) {
 
 
 
-normalizeGeneDE <- function(de, org) {
+normalizeGeneDE <- function(de, org=NA, annotate=TRUE) {
     de <- as.data.table(as.data.frame(de), keep.rownames=TRUE)
     rename.smart(de, 
                  ID=c("gene", "entrez", "symbol", "rn"),
@@ -144,7 +144,9 @@ normalizeGeneDE <- function(de, org) {
     )    
     # :ToDo: it's a hack
     
-    de <- merge(as.data.frame(de), unique(reflink[, list(Entrez, symbol, product)]), by.x="ID", by.y="Entrez", all.x=T)
+    if (annotate) {
+        de <- merge(as.data.frame(de), unique(reflink[, list(Entrez, symbol, product)]), by.x="ID", by.y="Entrez", all.x=T)
+    }
     de <- de[!duplicated(de$ID), ]
     de <- de[!is.na(de$pval), ]
     de <- as.data.table(de[order(de$pval), ])
