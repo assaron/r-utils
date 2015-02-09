@@ -1,3 +1,5 @@
+library(Biobase)
+
 # exprs.file <- "./work/data/mmp_artyomov_1195/mmu.mp.full.refseq.htcnt"
 # pdata.file <- "./work/data/mmp_artyomov_1195/conditions.tsv"
 
@@ -153,3 +155,24 @@ normalizeGeneDE <- function(de, org=NA, annotate=TRUE) {
     de
 }
 
+
+read.gct <- function(gct, ...) { 
+    meta <- readLines(gct, n=2)
+    version <- meta[1]
+    size <- as.numeric(unlist(strsplit(meta[2], "\t")))
+    
+    stopifnot(grepl("^#1.2", version))
+    
+    t <- read.tsv(gct, skip=2, nrows=size[1], row.names=1, ...)
+    
+    exp <- as.matrix(t[, rev(ncol(t) + 1 - seq_len(size[2]))])
+    rownames(exp) <- rownames(t)
+    
+    fdata <- t[,seq_len(ncol(t) - size[2]), drop=F]
+    fmeta <- data.frame(labelDescription = colnames(fdata))
+    rownames(fmeta) <- colnames(fdata)
+    
+    fdata <- new("AnnotatedDataFrame", data=fdata, varMeta=fmeta)
+    
+    ExpressionSet(exp, featureData=fdata)
+}
