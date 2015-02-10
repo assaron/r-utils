@@ -1,4 +1,5 @@
 library(Biobase)
+library(data.table)
 
 # exprs.file <- "./work/data/mmp_artyomov_1195/mmu.mp.full.refseq.htcnt"
 # pdata.file <- "./work/data/mmp_artyomov_1195/conditions.tsv"
@@ -127,6 +128,7 @@ rename.smart <- function(de, ...) {
         if (length(z) == 0) {
             next
         }
+        z <- z[1]
         
         oldnames <- c(oldnames, colnames(de)[z])
         newnames <- c(newnames, field)
@@ -175,4 +177,11 @@ read.gct <- function(gct, ...) {
     fdata <- new("AnnotatedDataFrame", data=fdata, varMeta=fmeta)
     
     ExpressionSet(exp, featureData=fdata)
+}
+
+makeAnnotated <- function(data) {
+    meta <- data.frame(labelDescription = colnames(data))
+    rownames(meta) <- colnames(data)
+    
+    new("AnnotatedDataFrame", data=data, varMeta=meta)    
 }
