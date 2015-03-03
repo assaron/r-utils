@@ -137,6 +137,20 @@ rename.smart <- function(de, ...) {
     setnames(de, oldnames, newnames)    
 }
 
+normalizeMetDE <- function(de, org=NA, annotate=TRUE) {
+    de <- as.data.table(as.data.frame(de), keep.rownames=TRUE)
+    rename.smart(de, 
+                 ID=c("KEGG", "HMDB", "name", "rn"),
+                 pval=c("p.value", "pvalue"),
+                 log2FC=c("log2foldchange", "logfc")
+    )    
+        
+    de <- de[!duplicated(de$ID), ]
+    de <- de[!is.na(de$pval), ]
+    de <- as.data.table(de[order(de$pval), ])
+    de
+}
+
 
 
 normalizeGeneDE <- function(de, org=NA, annotate=TRUE) {
