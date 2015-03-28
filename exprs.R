@@ -171,34 +171,54 @@ normalizeGeneDE <- function(de, org=NA, annotate=TRUE) {
     de
 }
 
-
-read.gct <- function(gct, ...) { 
-    meta <- readLines(gct, n=2)
-    version <- meta[1]
-    size <- as.numeric(unlist(strsplit(meta[2], "\t")))
-    
-    stopifnot(grepl("^#1.2", version))
-    
-    t <- read.tsv(gct, skip=2, nrows=size[1], row.names=1, ...)
-    
-    exp <- as.matrix(t[, rev(ncol(t) + 1 - seq_len(size[2]))])
-    rownames(exp) <- rownames(t)
-    
-    fdata <- t[,seq_len(ncol(t) - size[2]), drop=F]
-    fmeta <- data.frame(labelDescription = colnames(fdata))
-    rownames(fmeta) <- colnames(fdata)
-    
-    fdata <- new("AnnotatedDataFrame", data=fdata, varMeta=fmeta)
-    
-    ExpressionSet(exp, featureData=fdata)
-}
-
 makeAnnotated <- function(data) {
     meta <- data.frame(labelDescription = colnames(data))
     rownames(meta) <- colnames(data)
     
     new("AnnotatedDataFrame", data=data, varMeta=meta)    
 }
+
+read.gct <- function(gct, ...) { 
+    meta <- readLines(gct, n=3)
+    version <- meta[1]
+    size <- as.numeric(unlist(strsplit(meta[2], "\t")))
+    
+    if (grepl("^#1.3", version)) {
+        ann.col <- size[3]
+        ann.row <- size[4]
+    } else if (grepl("^#1.2", version)) {
+        ann.col <- 1
+        ann.row <- 0
+    } else {
+        stop("Unsupported version of gct: use 1.2 or 1.3")
+    }
+    
+    
+    
+    t <- read.tsv(gct, skip=2 + 1 + ann.row, nrows=size[1], col.names=unlist(strsplit(meta[3], "\t")), row.names=1, ...)    
+    
+        
+    exp <- as.matrix(t[, (ann.col+1):ncol(t)])
+        
+    fdata <- makeAnnotated(t[,seq_len(ann.col), drop=F])
+
+    
+    if (ann.row > 0) {
+        pdata.raw <- t(read.tsv(gct, skip=2+1, nrows=ann.row, header=F))
+        pdata <- data.frame(pdata.raw[seq_len(size[2])+1+ann.col, , drop=F])
+        colnames(pdata) <- pdata.raw[1,]
+        rownames(pdata) <- colnames(exp)
+        pdata <- makeAnnotated(pdata)       
+        
+        res <- ExpressionSet(exp, featureData=fdata, phenoData=pdata)
+    } else {        
+        res <- ExpressionSet(exp, featureData=fdata)
+    }
+    
+    res    
+}
+
+
 
 zScore <- function(x) {
     x.means <- apply(x, 1,mean)
