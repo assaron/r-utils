@@ -199,3 +199,16 @@ makeAnnotated <- function(data) {
     
     new("AnnotatedDataFrame", data=data, varMeta=meta)    
 }
+
+zScore <- function(x) {
+    x.means <- apply(x, 1,mean)
+    x.sds<- apply(x, 1, sd)
+    res <- sweep(sweep(x, 1, x.means), 1, x.sds, "/")
+    return(res)
+}
+
+normalize.rows <- function(x) { 
+    x <- sweep(x, 1, apply(x, 1, min)) 
+    sweep(x, 1, apply(x, 1, max), "/") 
+} 
+
