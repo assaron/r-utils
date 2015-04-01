@@ -11,9 +11,14 @@ makeExpressionSetFromFile <- function(
     ) {
     
     require(Biobase)
-    exprs <- read.table(exprs.file)
+    exprs <- read.tsv(exprs.file, header=T, row.names=1)
     exprs <- as.matrix(exprs[grep(ignore.pattern, rownames(exprs), invert=TRUE), ])        
-    pdata <- read.table(pdata.file, header=T, row.names=1)
+    pdata <- read.tsv(pdata.file, header=T, row.names=1)
+    missing <- setdiff(rownames(pdata), colnames(exprs))
+    if (length(missing) > 0) {
+        warning(paste0("There are missing samples: ", paste(missing, collapse=" ")))        
+        
+    }
     pdata <- pdata[colnames(exprs), , drop=F]
     meta <- data.frame(labelDescription = colnames(pdata))
     rownames(meta) <- colnames(pdata)
