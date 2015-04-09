@@ -189,8 +189,8 @@ read.gct <- function(gct, ...) {
     size <- as.numeric(unlist(strsplit(meta[2], "\t")))
     
     if (grepl("^#1.3", version)) {
-        ann.col <- size[3]
-        ann.row <- size[4]
+        ann.col <- size[4]
+        ann.row <- size[3]
     } else if (grepl("^#1.2", version)) {
         ann.col <- 1
         ann.row <- 0
@@ -223,7 +223,21 @@ read.gct <- function(gct, ...) {
     res    
 }
 
-
+write.gct <- function(es, file) {
+    con <- file(file)
+    open(con, open="w")
+    writeLines("#1.3", con)
+    ann.col <- ncol(pData(es))
+    ann.row <- ncol(fData(es))
+    writeLines(sprintf("%s\t%s\t%s\t%s", nrow(es), ncol(es), ann.row, ann.col), con)
+    writeLines(paste0(c("ID", colnames(fData(es)), colnames(es)), collapse="\t"), con)
+    
+    ann.col.table <- t(as.matrix(pData(es)))    
+    ann.col.table <- cbind(matrix(rep(NA, ann.row*ann.col), nrow=ann.col), ann.col.table)
+    write.table(ann.col.table, file=con, quote=F, sep="\t", row.names=T, col.names=F)                          
+    write.table(cbind(fData(es), exprs(es)), file=con, quote=F, sep="\t", row.names=T, col.names=F)                          
+    close(con)    
+}
 
 zScore <- function(x) {
     x.means <- apply(x, 1,mean)
