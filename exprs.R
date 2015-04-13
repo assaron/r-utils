@@ -223,8 +223,12 @@ read.gct <- function(gct, ...) {
     res    
 }
 
-write.gct <- function(es, file) {
-    con <- file(file)
+write.gct <- function(es, file, gzip=FALSE) {
+    if (gzip) {
+        con <- gzfile(file)
+    } else {
+        con <- file(file)
+    }
     open(con, open="w")
     writeLines("#1.3", con)
     ann.col <- ncol(pData(es))
