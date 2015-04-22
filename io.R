@@ -45,6 +45,7 @@ read.table.smart <- function(path, ...) {
 read.tsv <- function(file, header=T, sep="\t", quote="", comment.char="", check.names=FALSE, ...) {
     read.table(file, header=header, sep=sep, quote=quote, 
                comment.char=comment.char, check.names=check.names,
+               stringsAsFactors=FALSE,
                ...)     
 }
 
