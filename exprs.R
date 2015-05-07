@@ -200,17 +200,17 @@ read.gct <- function(gct, ...) {
     
     
     
-    t <- read.tsv(gct, skip=2 + 1 + ann.row, nrows=size[1], col.names=unlist(strsplit(meta[3], "\t")), row.names=1, ...)    
+    t <- read.tsv(gct, skip=2 + 1 + ann.col, nrows=size[1], col.names=unlist(strsplit(meta[3], "\t")), row.names=1, header=F,  ...)    
     
         
-    exp <- as.matrix(t[, (ann.col+1):ncol(t)])
+    exp <- as.matrix(t[, (ann.row+1):ncol(t)])
         
-    fdata <- makeAnnotated(t[,seq_len(ann.col), drop=F])
+    fdata <- makeAnnotated(t[,seq_len(ann.row), drop=F])
 
     
     if (ann.row > 0) {
         pdata.raw <- t(read.tsv(gct, skip=2+1, nrows=ann.row, header=F))
-        pdata <- data.frame(pdata.raw[seq_len(size[2])+1+ann.col, , drop=F])
+        pdata <- data.frame(pdata.raw[seq_len(ncol(exp))+1+ann.row, , drop=F])
         colnames(pdata) <- pdata.raw[1,]
         rownames(pdata) <- colnames(exp)
         pdata <- makeAnnotated(pdata)       
