@@ -184,6 +184,7 @@ makeAnnotated <- function(data) {
 }
 
 read.gct <- function(gct, ...) { 
+    stopifnot(require(Biobase))
     meta <- readLines(gct, n=3)
     version <- meta[1]
     size <- as.numeric(unlist(strsplit(meta[2], "\t")))
@@ -254,4 +255,15 @@ normalize.rows <- function(x) {
     x <- sweep(x, 1, apply(x, 1, min)) 
     sweep(x, 1, apply(x, 1, max), "/") 
 } 
+
+collapseBy <- function(es, factor, FUN=median) {
+    ranks <- apply(exprs(es), 1, FUN)
+    t <- data.frame(f=factor, i=seq_along(ranks), r=ranks)
+    t <- t[order(t$r, decreasing=T), ]
+    keep <- t[!duplicated(t$f),]$i
+    res <- es[keep, ]
+    fData(res)$origin <- rownames(res)
+    rownames(res) <- factor[keep]
+    res
+}
 
