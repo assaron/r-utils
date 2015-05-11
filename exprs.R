@@ -209,7 +209,7 @@ read.gct <- function(gct, ...) {
 
     
     if (ann.row > 0) {
-        pdata.raw <- t(read.tsv(gct, skip=2+1, nrows=ann.row, header=F))
+        pdata.raw <- t(read.tsv(gct, skip=2+1, nrows=ann.col, header=F))
         pdata <- data.frame(pdata.raw[seq_len(ncol(exp))+1+ann.row, , drop=F])
         colnames(pdata) <- pdata.raw[1,]
         rownames(pdata) <- colnames(exp)
@@ -224,6 +224,7 @@ read.gct <- function(gct, ...) {
 }
 
 write.gct <- function(es, file, gzip=FALSE) {
+    stopifnot(require(Biobase))
     if (gzip) {
         con <- gzfile(file)
     } else {
