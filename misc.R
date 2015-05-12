@@ -1,7 +1,7 @@
 loadOrInstall <- function(package) {
     if (!do.call(require, list(package))) {        
         biocLite(package, suppressUpdates=TRUE)    
-        do.call(library, list(package))
+        stopifnot(do.call(require, list(package)))
     }
 }
 
