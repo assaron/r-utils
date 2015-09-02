@@ -147,7 +147,7 @@ normalizeMetDE <- function(de, org=NA, annotate=TRUE) {
     rename.smart(de, 
                  ID=c("KEGG", "HMDB", "name", "rn"),
                  pval=c("p.value", "pvalue", "p-value"),
-                 log2FC=c("log2foldchange", "logfc", "log2(fc)")
+                 log2FC=c("log2foldchange", "logfc", "log2(fc)", "dm")
     )    
         
     de <- de[!duplicated(de$ID), ]
