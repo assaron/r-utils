@@ -16,10 +16,16 @@ makeExpressionSetFromFile <- function(
     pdata <- read.tsv(pdata.file, header=T, row.names=1)
     missing <- setdiff(rownames(pdata), colnames(exprs))
     if (length(missing) > 0) {
-        warning(paste0("There are missing samples: ", paste(missing, collapse=" ")))        
-        
+        warning(paste0("There are missing samples: ", paste(missing, collapse=" ")))                
     }
-    pdata <- pdata[colnames(exprs), , drop=F]
+    
+    unannotated <- setdiff(colnames(exprs), rownames(pdata))
+    if (length(unannotated) > 0) {
+        stop(paste0("There are unannotated samples: ", paste(unannotated, collapse=" ")))
+    }
+    
+    pdata <- pdata[rownames(pdata) %in% colnames(exprs), , drop=F]
+    exprs <- exprs[, rownames(pdata)]
     meta <- data.frame(labelDescription = colnames(pdata))
     rownames(meta) <- colnames(pdata)
     
