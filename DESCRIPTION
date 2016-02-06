@@ -1,0 +1,14 @@
+Package: rUtils
+Type: Package
+Title: Package with a bunch of useful R functions
+Version: 0.1
+Date: 2016-02-07
+Author: Alexey Sergushichev
+Maintainer: Alexey Sergushichev <alserg@rain.ifmo.ru>
+Description: Package with a bunch of useful R functions
+Imports:
+    data.table
+Depends:
+    R (>= 2.10)
+License: MIT
+VignetteBuilder: knitr
