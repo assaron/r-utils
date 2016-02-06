@@ -40,3 +40,8 @@ messagef <- function(...) {
 warningf <- function(...) {
     warning(sprintf(...))
 }
+
+matrixAsColumnList <- function(m) { 
+    split(m, col(m)) 
+}
+
