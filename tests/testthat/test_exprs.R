@@ -1,3 +1,5 @@
+context("exprs")
+
 test_that("normalizeDE works on limma", {
     t <- read.tsv(system.file("tests/data/mm.tcells.de.tsv", package="rUtils"))
     
