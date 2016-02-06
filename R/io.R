@@ -43,10 +43,16 @@ read.table.smart <- function(path, ...) {
 
 
 read.tsv <- function(file, header=T, sep="\t", quote="", comment.char="", check.names=FALSE, ...) {
-    read.table(file, header=header, sep=sep, quote=quote, 
+    args <- list(...)
+    res <- read.table(file, header=header, sep=sep, quote=quote, 
                comment.char=comment.char, check.names=check.names,
                stringsAsFactors=FALSE,
-               ...)     
+               ...)
+    if ((!"row.names" %in% names(args)) && (colnames(res)[1] == "")) {
+        rownames(res) <- res[, 1]
+        res[[1]] <- NULL
+    }
+    res
 }
 
 write.tsv <- function(table, dir, file=NULL, gzip=FALSE, row.names=NA, col.names=NA, ...) {

@@ -164,18 +164,14 @@ normalizeMetDE <- function(de, org=NA, annotate=TRUE) {
 
 
 
-normalizeGeneDE <- function(de, org=NA, annotate=TRUE) {
+normalizeGeneDE <- function(de, org=NA) {
     de <- as.data.table(as.data.frame(de), keep.rownames=TRUE)
     rename.smart(de, 
-                 ID=c("gene", "entrez", "symbol", "rn"),
+                 ID=c("gene", "entrez", "rn", "symbol"),
                  pval=c("p.value", "pvalue"),
                  log2FC=c("log2foldchange", "logfc")
     )    
-    # :ToDo: it's a hack
     
-    if (annotate) {
-        de <- merge(as.data.frame(de), unique(reflink[, list(Entrez, symbol, product)]), by.x="ID", by.y="Entrez", all.x=T)
-    }
     de <- de[!duplicated(de$ID), ]
     de <- de[!is.na(de$pval), ]
     de <- as.data.table(de[order(de$pval), ])
