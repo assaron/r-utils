@@ -263,7 +263,7 @@ collapseBy <- function(es, factor, FUN=median) {
     ranks <- apply(exprs(es), 1, FUN)
     t <- data.frame(f=factor, i=seq_along(ranks), r=ranks)
     t <- t[order(t$r, decreasing=T), ]
-    keep <- t[!duplicated(t$f),]$i
+    keep <- t[!duplicated(t$f) & !is.na(t$f),]$i
     res <- es[keep, ]
     fData(res)$origin <- rownames(res)
     rownames(res) <- factor[keep]

@@ -7,3 +7,12 @@ test_that("normalizeDE works on limma", {
     expect_equal(head(t.norm$ID, n=3), c("170942", "80876", "15937"))
     expect_true(abs(t.norm$pval[1] / 4.86e-11 - 1) < 0.01)
 })
+
+
+
+test_that("collapseBy works with NAs", {
+    t <- read.gct(system.file("tests/data/GSE63040.gct", package="rUtils"))
+    fData(t)$symbol <- gsub("na", NA, fData(t)$symbol)
+    t1 <- collapseBy(t, fData(t)$symbol)
+    expect_equal(length(rownames(t1)), 8)
+})
