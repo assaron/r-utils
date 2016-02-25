@@ -248,8 +248,8 @@ write.gct <- function(es, file, gzip=FALSE) {
 }
 
 zScore <- function(x) {
-    x.means <- apply(x, 1,mean)
-    x.sds<- apply(x, 1, sd)
+    x.means <- apply(x, 1, mean, na.rm=T)
+    x.sds <- apply(x, 1, sd, na.rm=T)
     res <- sweep(sweep(x, 1, x.means), 1, x.sds, "/")
     return(res)
 }

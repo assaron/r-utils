@@ -22,3 +22,9 @@ test_that("normalize.rows works with NAs", {
     exprs(t)[2,2] <- NA
     expect_equal(sum(is.na(normalize.rows(exprs(t))[2, ])), 1)
 })
+
+test_that("zScore works with NAs", {
+    t <- read.gct(system.file("tests/data/GSE63040.gct", package="rUtils"))
+    exprs(t)[2,2] <- NA
+    expect_equal(sum(is.na(zScore(exprs(t))[2, ])), 1)
+})
