@@ -16,3 +16,9 @@ test_that("collapseBy works with NAs", {
     t1 <- collapseBy(t, fData(t)$symbol)
     expect_equal(length(rownames(t1)), 8)
 })
+
+test_that("normalize.rows works with NAs", {
+    t <- read.gct(system.file("tests/data/GSE63040.gct", package="rUtils"))
+    exprs(t)[2,2] <- NA
+    expect_equal(sum(is.na(normalize.rows(exprs(t))[2, ])), 1)
+})

@@ -255,8 +255,8 @@ zScore <- function(x) {
 }
 
 normalize.rows <- function(x) { 
-    x <- sweep(x, 1, apply(x, 1, min)) 
-    sweep(x, 1, apply(x, 1, max), "/") 
+    x <- sweep(x, 1, apply(x, 1, min, na.rm=TRUE)) 
+    sweep(x, 1, apply(x, 1, max, na.rm=TRUE), "/") 
 } 
 
 collapseBy <- function(es, factor, FUN=median) {
