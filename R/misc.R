@@ -45,3 +45,4 @@ matrixAsColumnList <- function(m) {
     split(m, col(m)) 
 }
 
+"%o%" <- compose

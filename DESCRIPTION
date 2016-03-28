@@ -7,7 +7,7 @@ Author: Alexey Sergushichev
 Maintainer: Alexey Sergushichev <alserg@rain.ifmo.ru>
 Description: Package with a bunch of useful R functions
 Imports:
-    data.table
+    data.table, pryr
 Depends:
     R (>= 2.10)
 License: MIT
