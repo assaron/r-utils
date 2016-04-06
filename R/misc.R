@@ -46,3 +46,5 @@ matrixAsColumnList <- function(m) {
 }
 
 "%o%" <- pryr::compose
+
+ulength <- pryr::compose(length, unique)

@@ -6,3 +6,7 @@ test_that("%o% works", {
     c <- apply(a, 1, function(x) sum(abs(x)))
     expect_equal(b, c)
 })
+
+test_that("ulength works", {
+    expect_equal(ulength(c("a", "b", "a")), 2)
+})
