@@ -1,5 +1,6 @@
 options(stringsAsFactors=F)
 
+#' @export
 read.table.smart <- function(path, ...) {
     fields <- list(...)    
     conn <- file(path)
@@ -42,6 +43,7 @@ read.table.smart <- function(path, ...) {
 
 
 
+#' @export
 read.tsv <- function(file, header=T, sep="\t", quote="", comment.char="", check.names=FALSE, ...) {
     args <- list(...)
     res <- read.table(file, header=header, sep=sep, quote=quote, 
@@ -55,6 +57,7 @@ read.tsv <- function(file, header=T, sep="\t", quote="", comment.char="", check.
     res
 }
 
+#' @export
 write.tsv <- function(table, dir, file=NULL, gzip=FALSE, row.names=NA, col.names=NA, ...) {
     name <- deparse(substitute(table))
     table <- as.data.frame(table) 

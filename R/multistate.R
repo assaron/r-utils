@@ -1,8 +1,9 @@
-# Normalize expression table
-# @param exprs Table with expressions
-# @param zero.rm If TRUE removes genes with zero expression in all samples
-# @param log2 It TRUE applies log2 transform. Zeroes are replaced with minimal non-zero element for sample
-# @param quantile If TRUE applies quantile normalization
+#' Normalize expression table
+#' @param exprs Table with expressions
+#' @param zero.rm If TRUE removes genes with zero expression in all samples
+#' @param log2 It TRUE applies log2 transform. Zeroes are replaced with minimal non-zero element for sample
+#' @param quantile If TRUE applies quantile normalization
+#' @export
 normalizeExpressions <- function(exprs, zero.rm=T, log2=T, quantile=T) {
     if (zero.rm) {
         # removing unexpressed genes
@@ -34,6 +35,7 @@ normalizeExpressions <- function(exprs, zero.rm=T, log2=T, quantile=T) {
     return(exprs)
 }
 
+#' @export
 diffExprM <- function(exprs, conditions.vector, states, top=Inf, log2=F, quantile=F, method=c("edgeR", "limma"), log2.min.expr=-Inf) {
     method <- match.arg(method)
     exprs <-as.matrix(exprs)
@@ -107,6 +109,7 @@ diffExprM <- function(exprs, conditions.vector, states, top=Inf, log2=F, quantil
     return(res)
 }
 
+#' @export
 appendToNames <- function(x, suffix, ignore=c()) {
     require(plyr)
     rename(x, 
@@ -115,6 +118,7 @@ appendToNames <- function(x, suffix, ignore=c()) {
                 function(n) if (n %in% ignore) n else paste0(n, suffix))) 
 }
 
+#' @export
 prependToNames <- function(x, prefix, ignore=c()) {
     require(plyr)
     rename(x, 
@@ -124,11 +128,13 @@ prependToNames <- function(x, prefix, ignore=c()) {
 }
 
 
+#' @export
 aggregateColumns <- function(x, columns, new.name, f) {
     x[[new.name]] <- apply(x[, columns], 1, f)
     x
 }
 
+#' @export
 combineDE <- function(de.all, add.min=T) {
     de.all <- de.all[!sapply(de.all, is.null)]
     de.combined <- Map(
@@ -156,6 +162,7 @@ combineDE <- function(de.all, add.min=T) {
     de.combined
 }
 
+#' @export
 getConditionLogFCs <- function(logexprs, conditions.vector) {
     condition.means <- data.frame(sapply(sort(unique(conditions.vector)), function(condition) {
         print(condition)

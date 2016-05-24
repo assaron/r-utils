@@ -1,3 +1,4 @@
+#' @export
 oneReactionDeletion <- function(model, reaction, lb=0, ub=0) {
   model.sd <- model
   model.sd <- changeBounds(model.sd, reaction, lb=lb, ub=ub)
@@ -5,6 +6,7 @@ oneReactionDeletion <- function(model, reaction, lb=0, ub=0) {
   model.sd.sol
 }
 
+#' @export
 allOneReactionDeletions <- function(model, reaction.to.compare) {
   model.sol <- optimizeProb(model)
   r.t.c.pos <- checkReactId(model, reaction.to.compare)@react_pos
@@ -22,10 +24,12 @@ allOneReactionDeletions <- function(model, reaction.to.compare) {
   })
 }
 
+#' @export
 fluxVia <- function(model, solution, reaction) {
   solution@fluxdist[checkReactId(model, reaction)@react_pos]  
 }
 
+#' @export
 compareFluxes <- function(models, filter.zero=T, react=NULL) {
   m.inf <- max(sapply(models, uppbnd))
   
@@ -73,6 +77,7 @@ compareFluxes <- function(models, filter.zero=T, react=NULL) {
   models.f
 }
 
+#' @export
 getFluxGraph <- function(m, m.f=NULL) {
   if (is.null(m.f)) {
     m.sol <- optimizeProb(m, algorithm="mtf")
@@ -130,6 +135,7 @@ getFluxGraph <- function(m, m.f=NULL) {
   res 
 }
 
+#' @export
 changeObjFuncRel <- function(model, reacts) {
   reacts.max <- sapply(reacts, function(react) {
       optimizeProb(changeObjFunc(model, react))@lp_obj

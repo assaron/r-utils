@@ -1,3 +1,4 @@
+#' @export
 getIntersectionSets <-function(name, sets, include=unique(unlist(sets)), exclude=NULL) {
     if (length(sets) == 0) {        
         res <- list(name=setdiff(include, exclude))

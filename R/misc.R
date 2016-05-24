@@ -1,3 +1,4 @@
+#' @export
 loadOrInstall <- function(package) {
     if (!do.call(require, list(package))) {        
         biocLite(package, suppressUpdates=TRUE)    
@@ -5,6 +6,7 @@ loadOrInstall <- function(package) {
     }
 }
 
+#' @export
 setSimilarity <- function(set1, set2){
     c1 <- unique(set1)
     c2 <- unique(set2)            
@@ -19,6 +21,7 @@ setSimilarity <- function(set1, set2){
     }
 }
 
+#' @export
 pairwiseCompare <- function(FUN, list1, list2=list1, ...) {
     additionalArguments <- list(...)
     f1 <- function(...) {
@@ -33,18 +36,23 @@ pairwiseCompare <- function(FUN, list1, list2=list1, ...) {
     z
 }
 
+#' @export
 messagef <- function(...) {
     message(sprintf(...))
 }
 
+#' @export
 warningf <- function(...) {
     warning(sprintf(...))
 }
 
+#' @export
 matrixAsColumnList <- function(m) { 
     split(m, col(m)) 
 }
 
+#' @export
 "%o%" <- pryr::compose
 
+#' @export
 ulength <- pryr::compose(length, unique)

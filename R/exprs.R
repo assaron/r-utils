@@ -4,6 +4,7 @@ library(data.table)
 # exprs.file <- "./work/data/mmp_artyomov_1195/mmu.mp.full.refseq.htcnt"
 # pdata.file <- "./work/data/mmp_artyomov_1195/conditions.tsv"
 
+#' @export
 makeExpressionSetFromFile <- function(
     exprs.file, 
     pdata.file,
@@ -35,10 +36,12 @@ makeExpressionSetFromFile <- function(
     eSet
 }
 
+#' @export
 DESeqDataSetFromExpressionSet <- function(eSet, design) {
     DESeqDataSetFromMatrix(exprs(eSet), pData(eSet), design)
 }
 
+#' @export
 exprsFromSpotfireDir <- function(met.data.dir) {
     files <- list.files(met.data.dir, pattern="forSpotfire.txt", full.names=T, recursive=T)
     suffixes <- sapply(files, function(f) basename(dirname(f)))
@@ -69,6 +72,7 @@ exprsFromSpotfireDir <- function(met.data.dir) {
     ion.exprs    
 }
 
+#' @export
 exprsFromSpotfire <- function(met.data.file, ion.suffix) {
     met.data <- read.csv(file=met.data.file, head=FALSE, sep="\t", stringsAsFactors=F, colClasses="character")
     met.data <- unname(t(as.matrix(met.data)))
@@ -122,6 +126,7 @@ exprsFromSpotfire <- function(met.data.file, ion.suffix) {
     met.exprs
 }
 
+#' @export
 rename.smart <- function(de, ...) {    
     fields <- list(...) 
     oldnames <- character(0)
@@ -148,6 +153,7 @@ rename.smart <- function(de, ...) {
     setnames(de, oldnames, newnames)    
 }
 
+#' @export
 normalizeMetDE <- function(de, org=NA, annotate=TRUE) {    
     de <- as.data.table(as.data.frame(de), keep.rownames=!is.numeric(attr(de, "row.names")))
     rename.smart(de, 
@@ -164,6 +170,7 @@ normalizeMetDE <- function(de, org=NA, annotate=TRUE) {
 
 
 
+#' @export
 normalizeGeneDE <- function(de, org=NA) {
     de <- as.data.table(as.data.frame(de), keep.rownames=TRUE)
     rename.smart(de, 
@@ -178,6 +185,7 @@ normalizeGeneDE <- function(de, org=NA) {
     de
 }
 
+#' @export
 makeAnnotated <- function(data) {
     meta <- data.frame(labelDescription = colnames(data))
     rownames(meta) <- colnames(data)
@@ -185,6 +193,7 @@ makeAnnotated <- function(data) {
     new("AnnotatedDataFrame", data=data, varMeta=meta)    
 }
 
+#' @export
 read.gct <- function(gct, ...) { 
     stopifnot(require(Biobase))
     meta <- readLines(gct, n=3)
@@ -226,6 +235,7 @@ read.gct <- function(gct, ...) {
     res    
 }
 
+#' @export
 write.gct <- function(es, file, gzip=FALSE) {
     stopifnot(require(Biobase))
     if (gzip) {
@@ -247,6 +257,7 @@ write.gct <- function(es, file, gzip=FALSE) {
     close(con)    
 }
 
+#' @export
 zScore <- function(x) {
     x.means <- apply(x, 1, mean, na.rm=T)
     x.sds <- apply(x, 1, sd, na.rm=T)
@@ -254,11 +265,13 @@ zScore <- function(x) {
     return(res)
 }
 
+#' @export
 normalize.rows <- function(x) { 
     x <- sweep(x, 1, apply(x, 1, min, na.rm=TRUE)) 
     sweep(x, 1, apply(x, 1, max, na.rm=TRUE), "/") 
 } 
 
+#' @export
 collapseBy <- function(es, factor, FUN=median) {
     ranks <- apply(exprs(es), 1, FUN)
     t <- data.frame(f=factor, i=seq_along(ranks), r=ranks)
