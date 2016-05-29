@@ -294,7 +294,6 @@ pcaPlot <- function(es, c1, c2) {
     stopifnot(require(ggplot2))
     pca <- prcomp(t(exprs(es)))
     
-    
     explained <- (pca$sdev)^2 / sum(pca$sdev^2)
     
     xs <- sprintf("PC%s", seq_along(explained))
@@ -303,7 +302,7 @@ pcaPlot <- function(es, c1, c2) {
     pp <- ggplot(data=cbind(as.data.frame(pca$x), pData(es)))
     
     pp + 
-        geom_point(aes(x=eval(parse(text=xs[c1])), 
-                       y=eval(parse(text=xs[c2]))), size=3) +
+        geom_point(aes_string(x=xs[c1], y=xs[c2]),
+                       size=3) +
         xlab(xlabs[c1]) + ylab(xlabs[c2])
 }
