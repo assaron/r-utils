@@ -305,8 +305,7 @@ pcaPlot <- function(es, c1, c2) {
     
     pp <- ggplot(data=cbind(as.data.frame(pca$x), pData(es)))
     
-    pp + 
-        geom_point(aes_string(x=xs[c1], y=xs[c2]),
-                       size=3) +
+    pp + aes_string(x=xs[c1], y=xs[c2]) +
+        geom_point(size=3) +
         xlab(xlabs[c1]) + ylab(xlabs[c2])
 }
