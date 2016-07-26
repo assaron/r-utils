@@ -155,7 +155,9 @@ rename.smart <- function(de, ...) {
 
 #' @export
 normalizeMetDE <- function(de, org=NA, annotate=TRUE) {    
-    de <- as.data.table(as.data.frame(de), keep.rownames=!is.numeric(attr(de, "row.names")))
+    if (!is(de, "data.table")) {
+        de <- as.data.table(as.data.frame(de), keep.rownames=!is.numeric(attr(de, "row.names")))
+    }
     rename.smart(de, 
                  ID=c("KEGG", "HMDB", "name", "rn"),
                  pval=c("p.value", "pvalue", "p-value"),
@@ -172,7 +174,9 @@ normalizeMetDE <- function(de, org=NA, annotate=TRUE) {
 
 #' @export
 normalizeGeneDE <- function(de, org=NA) {
-    de <- as.data.table(as.data.frame(de), keep.rownames=TRUE)
+    if (!is(de, "data.table")) {
+        de <- as.data.table(as.data.frame(de), keep.rownames=!is.numeric(attr(de, "row.names")))
+    }
     rename.smart(de, 
                  ID=c("gene", "entrez", "rn", "symbol"),
                  pval=c("p.value", "pvalue"),
