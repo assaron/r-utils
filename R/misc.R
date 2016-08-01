@@ -56,3 +56,9 @@ matrixAsColumnList <- function(m) {
 
 #' @export
 ulength <- pryr::compose(length, unique)
+
+#' @export
+replaceNA <- function(x, y) { x[is.na(x)] <- y; x}
+
+#' @export
+'%f%' <- function(s, a) do.call("sprintf", c(s, as.list(a))) 
