@@ -197,6 +197,12 @@ makeAnnotated <- function(data) {
     new("AnnotatedDataFrame", data=data, varMeta=meta)    
 }
 
+#' Reads ExpressionSet from GCT file. 
+#'
+#' Only versions 1.2 and 1.3 are supported.
+#' @param gct Path to gct file
+#' @param ... additional options for read.csv
+#' @return ExpressionSet object
 #' @export
 read.gct <- function(gct, ...) { 
     stopifnot(require(Biobase))
@@ -205,11 +211,11 @@ read.gct <- function(gct, ...) {
     size <- as.numeric(unlist(strsplit(meta[2], "\t")))
     
     if (grepl("^#1.3", version)) {
-        ann.col <- size[4]
-        ann.row <- size[3]
+        ann.col <- size[4] # number of column annotations = number of additional rows
+        ann.row <- size[3] # number of row annotations = number of additional columns
     } else if (grepl("^#1.2", version)) {
-        ann.col <- 1
-        ann.row <- 0
+        ann.col <- 0
+        ann.row <- 1
     } else {
         stop("Unsupported version of gct: use 1.2 or 1.3")
     }
@@ -224,7 +230,7 @@ read.gct <- function(gct, ...) {
     fdata <- makeAnnotated(t[,seq_len(ann.row), drop=F])
 
     
-    if (ann.row > 0) {
+    if (ann.col > 0) {
         pdata.raw <- t(read.tsv(gct, skip=2+1, nrows=ann.col, header=F))
         pdata <- data.frame(pdata.raw[seq_len(ncol(exp))+1+ann.row, , drop=F])
         colnames(pdata) <- pdata.raw[1,]

@@ -29,3 +29,15 @@ test_that("zScore works with NAs", {
     exprs(t)[2,2] <- NA
     expect_equal(sum(is.na(zScore(exprs(t))[2, ])), 1)
 })
+
+test_that("read.gct works with gct #1.3", {
+    t <- read.gct(system.file("tests/data/GSE63040.gct", package="rUtils"))
+    expect_true(nrow(t) == 10)
+    expect_true(ncol(t) == 4)
+})
+
+test_that("read.gct works with gct #1.2", {
+    t <- read.gct(system.file("tests/data/GSE63040_gct12.gct", package="rUtils"))
+    expect_true(nrow(t) == 10)
+    expect_true(ncol(t) == 4)
+})
