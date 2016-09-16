@@ -180,6 +180,7 @@ normalizeGeneDE <- function(de, org=NA) {
     rename.smart(de, 
                  ID=c("gene", "entrez", "rn", "symbol"),
                  pval=c("p.value", "pvalue"),
+                 baseMean=c("aveexpr"),
                  log2FC=c("log2foldchange", "logfc")
     )    
     
