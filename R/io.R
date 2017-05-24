@@ -89,3 +89,28 @@ write.tsv <- function(table, dir, file=NULL, gzip=FALSE, row.names=NA, col.names
         close(file)
     }
 }
+
+#' Reads gtf file to data.table
+#' @param file Path to file
+#' @import data.table
+#' @export
+read.gtf <- function(file, attrs.to.extract=c("gene_id", "transcript_id", "gene_type", "gene_name")) {
+    res <- fread(file, header=F, col.names = c("chr", "source", "feature", "start", "end", "score", "strand", "frame", "attribute"))
+                 
+    attrlist <- strsplit(res$attribute, "; *")
+    attrlist_length <- sapply(attrlist, length)
+    attrtable <- data.table(rn=rep(seq_along(attrlist), attrlist_length), raw=unlist(attrlist))
+    attrtable[, name := gsub(" .*", "", raw)]
+    attrtable[, value := gsub(".* ", "", raw)]
+    attrtable[, value := gsub('^"(.*)"$', "\\1", value)]
+    attrtable[, raw := NULL]
+    all_attrs <- unique(attrtable$name)
+    attrmatrix <- matrix(nrow = length(attrlist), ncol=length(all_attrs))
+    colnames(attrmatrix) <- all_attrs
+    attrtable[, name := match(name, all_attrs)]
+    attrmatrix[cbind(attrtable$rn, attrtable$name)] <- attrtable$value
+    res[, attribute := NULL]
+    
+    res <- cbind(res, attrmatrix)
+    res
+}
