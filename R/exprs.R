@@ -181,6 +181,7 @@ normalizeGeneDE <- function(de, org=NA) {
                  ID=c("gene", "entrez", "rn", "symbol"),
                  pval=c("p.value", "pvalue"),
                  baseMean=c("aveexpr"),
+                 stat=c("t"),
                  log2FC=c("log2foldchange", "logfc")
     )    
     
