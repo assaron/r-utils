@@ -94,8 +94,13 @@ write.tsv <- function(table, dir, file=NULL, gzip=FALSE, row.names=NA, col.names
 #' @param file Path to file
 #' @import data.table
 #' @export
-read.gtf <- function(file, attrs.to.extract=c("gene_id", "transcript_id", "gene_type", "gene_name")) {
+read.gtf <- function(file, attrs.to.extract=c("gene_id", "transcript_id", "gene_type", "gene_name"),
+                     features.to.extract=NULL) {
     res <- fread(file, header=F, col.names = c("chr", "source", "feature", "start", "end", "score", "strand", "frame", "attribute"))
+
+    if (!is.null(features.to.extract)) {
+        res <- res[feature %in% features.to.extract,]
+    }
                  
     attrlist <- strsplit(res$attribute, "; *")
     attrlist_length <- sapply(attrlist, length)
