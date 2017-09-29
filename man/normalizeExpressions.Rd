@@ -18,4 +18,3 @@ normalizeExpressions(exprs, zero.rm = T, log2 = T, quantile = T)
 \description{
 Normalize expression table
 }
-

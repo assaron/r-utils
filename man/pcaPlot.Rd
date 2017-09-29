@@ -19,4 +19,3 @@ Makes nice PCA plot for expression data
 \examples{
 pcaPlot(es.norm, 1, 2) + aes(color=time)
 }
-

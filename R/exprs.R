@@ -328,6 +328,7 @@ pcaPlot <- function(es, c1, c2) {
 #'                                          levels=es.design))
 #' fit2 <- eBayes(fit2)
 #' de <- topTable(fit2, adjust.method="BH", number=Inf)
+#' @export
 makeContrasts2 <- function(contrast, levels) {
     f <- contrast[1]
     c1 <- contrast[3]

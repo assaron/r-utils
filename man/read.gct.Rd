@@ -17,4 +17,3 @@ ExpressionSet object
 \description{
 Only versions 1.2 and 1.3 are supported.
 }
-
