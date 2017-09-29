@@ -317,3 +317,25 @@ pcaPlot <- function(es, c1, c2) {
         geom_point(size=3) +
         xlab(xlabs[c1]) + ylab(xlabs[c2])
 }
+
+#' Make contrast DESeq2-style
+#' @param contrast vector of three elements (factor, level2, level1)
+#' @return  contrast table for level2-level1 comparison
+#' @examples 
+#' es.design <- model.matrix(~0+condition, data=pData(es.norm))
+#' fit <- lmFit(es.norm, es.design)
+#' fit2 <- contrasts.fit(fit, makeContrasts2(c("condition", "Treatment", "Control"), 
+#'                                          levels=es.design))
+#' fit2 <- eBayes(fit2)
+#' de <- topTable(fit2, adjust.method="BH", number=Inf)
+makeContrasts2 <- function(contrast, levels) {
+    f <- contrast[1]
+    c1 <- contrast[3]
+    c2 <- contrast[2]
+    tag <- sprintf("%s%s-%s%s", f, c2, f, c1)
+    ls <- colnames(levels)
+    res <- matrix(rep(0, length(ls)), nrow=length(ls), dimnames = list(Levels=ls, Contrasts=tag))
+    res[paste0(f, c2), ] <- 1
+    res[paste0(f, c1), ] <- -1
+    res
+}
