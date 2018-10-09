@@ -62,3 +62,28 @@ replaceNA <- function(x, y) { x[is.na(x)] <- y; x}
 
 #' @export
 '%f%' <- function(s, a) do.call("sprintf", c(s, as.list(a))) 
+
+#' @export
+minPos <- function(x) min(x[x > 0])
+
+#' Remove layer from ggplot object
+#' from https://stackoverflow.com/questions/13407236/remove-a-layer-from-a-ggplot2-chart
+#' @export
+removeLayer <- function(ggplot2_object, geom=NULL, color=NULL) {
+    # Delete layers that match the requested type.
+    layers <- lapply(ggplot2_object$layers, function(x) {
+        if (!is.null(geom) && (class(x$geom)[1] != geom)) {
+            return(x)
+        } 
+        
+        if (!is.null(color) && (!("colour" %in% names(x$aes_params)) ||
+                                (x$aes_params$colour != color))) {
+            return(x)
+        } 
+        NULL
+    })
+    # Delete the unwanted layers.
+    layers <- layers[!sapply(layers, is.null)]
+    ggplot2_object$layers <- layers
+    ggplot2_object
+}
