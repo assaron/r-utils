@@ -310,8 +310,13 @@ pcaPlot <- function(es, c1, c2) {
     
     xs <- sprintf("PC%s", seq_along(explained))
     xlabs <- sprintf("%s (%.1f%%)", xs, explained * 100)
+
+    d <- cbind(as.data.frame(pca$x), pData(es))
+    if (!"sample" %in% colnames(d)) {
+        d <- cbind(d, samples=colnames(es))
+    }
     
-    pp <- ggplot(data=cbind(as.data.frame(pca$x), sample=colnames(es), pData(es)))
+    pp <- ggplot(data=d)
     
     pp + aes_string(x=xs[c1], y=xs[c2]) +
         geom_point(size=3) +
