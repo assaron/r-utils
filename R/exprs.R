@@ -206,45 +206,70 @@ makeAnnotated <- function(data) {
 #' @param ... additional options for read.csv
 #' @return ExpressionSet object
 #' @export
-read.gct <- function(gct, ...) { 
-    stopifnot(require(Biobase))
-    meta <- readLines(gct, n=3)
+read.gct <- function(gct, ...) {
+    meta <- readLines(gct, n = 3)
     version <- meta[1]
     size <- as.numeric(unlist(strsplit(meta[2], "\t")))
-    
+
     if (grepl("^#1.3", version)) {
-        ann.col <- size[4] # number of column annotations = number of additional rows
-        ann.row <- size[3] # number of row annotations = number of additional columns
+        # number of column annotations = number of additional rows
+        ann.col <- size[4]
+
+        # number of row annotations = number of additional columns
+        ann.row <- size[3]
     } else if (grepl("^#1.2", version)) {
         ann.col <- 0
         ann.row <- 1
     } else {
         stop("Unsupported version of gct: use 1.2 or 1.3")
     }
-    
-    
-    
-    t <- read.tsv(gct, skip=2 + 1 + ann.col, nrows=size[1], col.names=unlist(strsplit(meta[3], "\t")), row.names=1, header=F,  ...)    
-    
-        
-    exp <- as.matrix(t[, (ann.row+1):ncol(t)])
-        
-    fdata <- makeAnnotated(t[,seq_len(ann.row), drop=F])
 
-    
-    if (ann.col > 0) {
-        pdata.raw <- t(read.tsv(gct, skip=2+1, nrows=ann.col, header=F))
-        pdata <- data.frame(pdata.raw[seq_len(ncol(exp))+1+ann.row, , drop=F])
-        colnames(pdata) <- pdata.raw[1,]
-        rownames(pdata) <- colnames(exp)
-        pdata <- makeAnnotated(pdata)       
-        
-        res <- ExpressionSet(exp, featureData=fdata, phenoData=pdata)
-    } else {        
-        res <- ExpressionSet(exp, featureData=fdata)
+    colNames <- unlist(strsplit(meta[3], "\t"))
+    if (grepl("/", colNames[1])) {
+        rowIdField <- sub("(.*)/(.*)", "\\1", colNames[1])
+        colIdField <- sub("(.*)/(.*)", "\\2", colNames[1])
+    } else {
+        rowIdField <- "id"
+        colIdField <- "id"
     }
-    
-    res    
+
+    colNames[1] <- rowIdField
+
+    t <- read.tsv(gct, skip = 2 + 1 + ann.col, nrows = size[1],
+                  col.names = colNames,
+                  row.names = NULL, header = FALSE,  ...)
+
+    if (any(duplicated(t[,1]))) {
+        warning(sprintf("duplicated row IDs: %s; they were renamed",
+                        paste0(t[head(which(duplicated(t[, 1]))),1], collapse = " ")))
+        rownames(t) <- make.unique(t[,1])
+    } else {
+        rownames(t) <- t[,1]
+    }
+
+
+    exp <- as.matrix(t[, (ann.row + 2):ncol(t)])
+
+    fdata <- makeAnnotated(t[, seq_len(ann.row + 1), drop = FALSE])
+
+
+    if (ann.col > 0) {
+        pdata.raw <- t(read.tsv(gct, skip = 2, nrows = ann.col + 1,
+                                header = FALSE, row.names=NULL))
+        pdata <- data.frame(pdata.raw[seq_len(ncol(exp)) + 1 + ann.row, ,
+                                      drop = FALSE],
+                            stringsAsFactors = FALSE)
+        colnames(pdata) <- pdata.raw[1, ]
+        colnames(pdata)[1] <- colIdField
+        rownames(pdata) <- colnames(exp)
+        pdata <- makeAnnotated(pdata)
+
+        res <- ExpressionSet(exp, featureData = fdata, phenoData = pdata)
+    } else {
+        res <- ExpressionSet(exp, featureData = fdata)
+    }
+
+    res
 }
 
 #' @export
