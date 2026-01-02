@@ -4,8 +4,11 @@
 \alias{read.gtf}
 \title{Reads gtf file to data.table}
 \usage{
-read.gtf(file, attrs.to.extract = c("gene_id", "transcript_id", "gene_type",
-  "gene_name"), features.to.extract = NULL)
+read.gtf(
+  file,
+  attrs.to.extract = c("gene_id", "transcript_id", "gene_type", "gene_name"),
+  features.to.extract = NULL
+)
 }
 \arguments{
 \item{file}{Path to file}
